@@ -6,7 +6,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import { registerEventListeners } from '@/services/eventListeners';
 import App from './App';
 import './global.css';
 
@@ -21,7 +20,4 @@ root.render(
     </BrowserRouter>
   </React.StrictMode>
 );
-
-// Initialize application event listeners
-registerEventListeners();
 

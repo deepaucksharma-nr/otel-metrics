@@ -85,7 +85,7 @@ export function registerEventListeners(): () => void {
 
   // Return cleanup function to detach all listeners
   return () => {
-    eventBus.off('data.snapshot.parsed');
+    eventBus.off('data.snapshot.loaded');
     eventBus.off('data.snapshot.error');
     eventBus.off('data.snapshot.load.start');
     eventBus.off('data.snapshot.load.progress');
@@ -93,5 +93,6 @@ export function registerEventListeners(): () => void {
     eventBus.off('ui.inspector.open');
     eventBus.off('ui.inspector.close');
     eventBus.off('ui.metric.inspect');
+    eventBus.off('ui.cardinality.simulateDrop');
   };
 }

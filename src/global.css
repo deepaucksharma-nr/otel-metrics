@@ -36,3 +36,43 @@ h5,
 h6 {
   color: var(--headingText);
 }
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.file-drop-zone {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.file-drop-zone .dropArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--borderColor);
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: var(--cardBg);
+}
+
+.file-drop-zone .dropArea:hover,
+.file-drop-zone .dropArea.dragActive {
+  border-color: var(--buttonPrimary);
+  background-color: var(--cardBgHover);
+}
+
+.file-drop-zone .statusList {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.file-drop-zone .statusList li {
+  margin-bottom: 5px;
+}
