@@ -88,6 +88,7 @@ StaticFileProvider → Worker Dispatch → Parser Worker → Event Bus → Metri
 - pako for gzip decompression in-browser
 - CSS Modules + tokens.css for styling
 - react-window for virtualized lists
+- lucide-react for icons
 
 ## Performance Targets
 
@@ -125,7 +126,7 @@ The testing harnesses in `tests/harnesses/` provide utilities for each layer's s
 1. `src/00-Overview.md` - Project overview
 2. `src/01-Architecture-Principles.md` - Contracts and boundaries
 3. `src/contracts/README.md` - TypeScript interfaces summary
-4. `src/02-Code-Comment-Guide.md` - Code documentation standards
+4. `src/02-Code-Comment-Guide.md` - Code documentation standards with TSDoc tags
 
 Backend focus path:
 - `src/data/*.md` → `src/logic/workers/*.md` → `src/logic/processing/*.md`
@@ -140,6 +141,7 @@ Frontend focus path:
 3. Co-locate related files (component, spec, tests, CSS modules)
 4. Pure logic modules never reach into global state
 5. UI modules receive all data via props; never call Zustand directly
+6. Code comments must include `@purpose` and `@algorithm` TSDoc tags (see `src/02-Code-Comment-Guide.md`)
 
 ## Documentation
 
