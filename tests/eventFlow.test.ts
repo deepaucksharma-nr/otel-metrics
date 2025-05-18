@@ -1,4 +1,4 @@
-import { describe, beforeEach, it, expect } from 'vitest';
+import { describe, beforeEach, it, expect, vi } from 'vitest';
 import { bus } from '../src/services/eventBus';
 import { registerEventListeners } from '../src/services/eventListeners';
 import { useMetricsSlice } from '../src/state/metricsSlice';
@@ -18,9 +18,19 @@ describe('event listener integration', () => {
     useMetricsSlice.setState({
       snapshots: {},
       snapshotOrder: [],
-      loading: [],
-      errors: [],
+      loading: {},
+      progress: {},
+      errors: {},
+      taskMap: {},
     });
+    
+    // Mock crypto.randomUUID for consistent task IDs
+    const originalCrypto = global.crypto;
+    vi.stubGlobal('crypto', {
+      ...originalCrypto,
+      randomUUID: vi.fn().mockReturnValue('test-task-id')
+    });
+    
     cleanup = registerEventListeners();
   });
 
@@ -30,12 +40,12 @@ describe('event listener integration', () => {
   });
 
   it('tracks loading files', () => {
-    bus.emit('data.snapshot.loading', { fileId: '1', fileName: 'foo.json' });
-    expect(useMetricsSlice.getState().loading).toContain('foo.json');
+    bus.emit('data.snapshot.load.start', { fileName: 'foo.json', fileSize: 1000 });
+    expect(useMetricsSlice.getState().loading['foo.json']).toBe(true);
   });
 
   it('records errors', () => {
-    bus.emit('data.error', { message: 'oops' });
-    expect(useMetricsSlice.getState().errors).toContain('oops');
+    bus.emit('data.snapshot.error', { fileName: 'bar.json', error: 'oops' });
+    expect(useMetricsSlice.getState().errors['bar.json'].message).toBe('oops');
   });
 });

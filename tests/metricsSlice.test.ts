@@ -17,22 +17,22 @@ describe('metricsSlice', () => {
   });
 
   it('markLoading tracks file name', () => {
-    useMetricsSlice.getState().markLoading('foo.json');
+    useMetricsSlice.getState().markLoading('foo.json', 1000, 'task789');
     expect(useMetricsSlice.getState().loading['foo.json']).toBe(true);
   });
 
   it('registerError records message and clears loading', () => {
     const actions = useMetricsSlice.getState();
-    actions.markLoading('bar.json');
+    actions.markLoading('bar.json', 1000, 'task123');
     actions.registerError('bar.json', 'oops');
     const state = useMetricsSlice.getState();
-    expect(state.errors['bar.json']).toBe('oops');
+    expect(state.errors['bar.json'].message).toBe('oops');
     expect(state.loading['bar.json']).toBeUndefined();
   });
 
   it('addSnapshot clears status for its file', () => {
     const actions = useMetricsSlice.getState();
-    actions.markLoading('baz.json');
+    actions.markLoading('baz.json', 1000, 'task456');
     actions.registerError('baz.json', 'err');
     actions.addSnapshot(makeSnapshot('id1', 'baz.json'));
     const state = useMetricsSlice.getState();

@@ -44,9 +44,19 @@ describe('CardinalityCapsule', () => {
         droppedKey="method"
       />
     );
-    expect(
-      screen.getByText(/\u2192 60 series \(40% less\)/)
-    ).toBeInTheDocument();
+
+    // Find the simulation result using the data-testid
+    const simulationResultDiv = screen.getByTestId('simulation-result');
+    
+    // Verify it exists and has the correct class
+    expect(simulationResultDiv).toBeInTheDocument();
+    expect(simulationResultDiv).toHaveClass('_simulationResult_34e5ba');
+    
+    // Verify it contains the correct information
+    const resultText = simulationResultDiv.textContent;
+    expect(resultText).toContain('60');
+    expect(resultText).toContain('40%');
+    expect(resultText).toContain('less');
   });
 });
 

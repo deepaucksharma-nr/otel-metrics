@@ -153,7 +153,7 @@ export const CardinalityCapsule: React.FC<CardinalityCapsuleProps> = ({
           </label>
 
           {isDropSimActive && droppedKey && (
-            <div className={styles.simulationResult}>
+            <div className={styles.simulationResult} data-testid="simulation-result">
               → <strong>{seriesCount}</strong> series (<strong>{reductionPct}%</strong> less)
             </div>
           )}

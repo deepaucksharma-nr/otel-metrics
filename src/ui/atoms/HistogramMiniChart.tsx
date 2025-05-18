@@ -89,6 +89,7 @@ export const HistogramMiniChart: React.FC<HistogramMiniChartProps> = ({
       data-testid="histogram-chart"
       className={className}
       style={{ display: 'flex', flexDirection: 'column', width: '100%', height: height + 40 }}
+      data-testid="histogram-chart"
     >
       <div style={{ position: 'relative', display: 'flex', alignItems: 'flex-end', height }}>
         {barHeights.map((h, i) => (

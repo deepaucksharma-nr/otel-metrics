@@ -268,6 +268,7 @@ export function dispatchToParserWorker(task: ParseTask): Promise<WorkerSuccess |
       worker, 
       task, 
       canceled: false,
+      progressInterval: undefined
     };
     
     // Setup periodic progress pings for large files

@@ -2,6 +2,7 @@
 
 import React, { useCallback, useRef, useState } from 'react';
 import { bus } from '../services/eventBus';
+import type { EventMap } from '../services/eventBus';
 import { validateFile, ValidFile } from './fileValidator';
 import { readFileContent } from './readFile';
 import { dispatchToParserWorker } from './dispatchToWorker';
@@ -50,29 +51,32 @@ export function StaticFileProvider({
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragActive, setDragActive] = useState(false);
   const [status, setStatus] = useState<Record<string, string>>({});
+  
+  type StatusState = Record<string, string>;
 
   const handleFiles = useCallback(
     async (files: FileList) => {
       for (const file of Array.from(files)) {
         const id = randomId();
         const snapshotId = `snap-${id}`;
-        setStatus((s) => ({ ...s, [id]: `\u{1F680} reading … ${file.name}` }));
-        bus.emit('data.snapshot.loading', { fileId: id, fileName: file.name });
+        setStatus((s: StatusState) => ({ ...s, [id]: `\u{1F680} reading … ${file.name}` }));
+        bus.emit('data.snapshot.load.start', { fileName: file.name, fileSize: file.size });
 
         const result = validateFile(file, maxSizeBytes);
         if (result.type === 'left') {
-          bus.emit('data.error', {
-            message: result.value.message,
-            error: result.value
+          bus.emit('data.snapshot.error', { 
+            fileName: file.name, 
+            error: result.value.message,
+            detail: result.value.code
           });
-          setStatus((s) => ({ ...s, [id]: `\u274C ${result.value.message}` }));
+          setStatus((s: StatusState) => ({ ...s, [id]: `\u274C ${result.value.message}` }));
           continue;
         }
         const valid: ValidFile = result.value;
         if (valid.isGzipped && !acceptGzip) {
           const msg = 'Gzip files are not accepted';
-          bus.emit('data.error', { message: msg });
-          setStatus((s) => ({ ...s, [id]: `\u274C ${msg}` }));
+          bus.emit('data.snapshot.error', { fileName: file.name, error: msg });
+          setStatus((s: StatusState) => ({ ...s, [id]: `\u274C ${msg}` }));
           continue;
         }
         try {
@@ -81,27 +85,29 @@ export function StaticFileProvider({
             snapshotId,
             fileName: file.name,
             rawJson: text,
+            fileSize: file.size,
           });
           if (workerRes.type === 'parsedSnapshot') {
             bus.emit('data.snapshot.loaded', { snapshot: workerRes.payload });
-            setStatus((s) => ({
+            setStatus((s: StatusState) => ({
               ...s,
               [id]: `\u2705 loaded ${workerRes.payload.id}`,
             }));
           } else {
-            bus.emit('data.error', {
-              message: workerRes.payload.message,
-              error: workerRes.payload
+            bus.emit('data.snapshot.error', {
+              fileName: file.name,
+              error: workerRes.payload.message,
+              detail: workerRes.payload.detail
             });
-            setStatus((s) => ({
+            setStatus((s: StatusState) => ({
               ...s,
               [id]: `\u274C ${workerRes.payload.message}`,
             }));
           }
         } catch (err) {
           const message = err instanceof Error ? err.message : String(err);
-          bus.emit('data.error', { message, error: err });
-          setStatus((s) => ({ ...s, [id]: `\u274C ${message}` }));
+          bus.emit('data.snapshot.error', { fileName: file.name, error: message });
+          setStatus((s: StatusState) => ({ ...s, [id]: `\u274C ${message}` }));
         }
       }
     },

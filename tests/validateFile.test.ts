@@ -2,7 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { validateFile } from '../src/data/fileValidator';
 
 function makeFile(name: string, size = 0): File {
-  return new File([''], name, { type: 'application/octet-stream', lastModified: 0 });
+  // Create a blob with the correct size
+  const content = size > 0 ? new Array(size).fill('a').join('') : '';
+  return new File([content], name, { type: 'application/octet-stream', lastModified: 0 });
 }
 
 describe('validateFile', () => {
